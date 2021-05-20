@@ -1,0 +1,11 @@
+<!-- Here's the DIV that we inject the map into -->
+<div #mapViewNode></div>
+
+<div id="mapMenuButton" class="esri-widget esri-component">
+  <button pButton type="button" label="Hyperwall Menu" icon="pi pi-bars" class="p-button-lg" (click)="hyperwallMenu.toggle($event)"></button>
+  <p-menu #hyperwallMenu id="hyperwallMenu" [popup]="true" [model]="hyperwallMenuItems" appendTo="body"></p-menu>
+</div>
+
+<div id="detailsModal" class="esri-widget esri-component" height='500' width='1000' background-color="white">
+  <div><app-details-modal *ngIf="showDetails" [details]="curDetails" (closeModal)="closeModal($event)"></app-details-modal></div>
+</div>

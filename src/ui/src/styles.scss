@@ -1,0 +1,85 @@
+/* You can add global styles to this file, and also import other style files */
+body {
+  margin: 0;
+}
+
+.p-menu {
+  width: auto !important;
+}
+
+.p-dialog-title {
+  width: 100% !important;
+}
+
+.esri-view-width-xlarge .esri-popup__main-container,
+.esri-view-width-large .esri-popup__main-container,
+.esri-view-width-medium .esri-popup__main-container
+{
+  max-height: 600px !important;
+  width: 600px !important;
+}
+
+canvas:focus {
+  outline: none;
+}
+
+.esri-view .esri-view-surface--inset-outline:focus::after {
+  outline: none !important;
+}
+
+.esri-legend__layer-cell--info {
+  max-width: 350px !important;
+}
+
+.esri-ui-corner .esri-component.esri-widget--panel {
+  width: 350px !important;
+  max-height: 640px;
+}
+
+#color-blind-toggle {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+#color-blind-toggle label {
+  padding-right: 4px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.sensor-row {
+  display: flex;
+  justify-content: space-around;
+}
+
+.sensor-row div p:first-child {
+  font-weight: bold;
+  font-size: large;
+}
+
+.esri-feature__content-element {
+  padding-bottom: 12px !important;
+}
+
+.esri-popup__footer {
+  display: none !important;
+}
+
+.esri-feature-content p {
+  margin-bottom: 0.75em !important;
+}
+
+.purpleair-chart p.chart-last-updated {
+  margin-bottom: 0 !important;
+}
+
+p.mb-0 {
+  margin-bottom: 0 !important;
+}
+
+p.mt-0, h1.mt-0, h2.mt-0 {
+  margin-top: 0 !important;
+}

@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="RVAir_sandbox:war">
+    <output-path>$PROJECT_DIR$/SpringServer/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>RVAir_sandbox</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="RVAir_sandbox.war">
+      <element id="artifact" artifact-name="RVAir_sandbox:war exploded" />
+    </root>
+  </artifact>
+</component>

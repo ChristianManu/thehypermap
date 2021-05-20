@@ -1,0 +1,104 @@
+
+<p-toast></p-toast>
+
+<div class="card">
+    <p-toolbar styleClass="p-mb-4">
+        <ng-template pTemplate="left">
+            <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2" (click)="openNew()"></button>
+            <button pButton pRipple [label]="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedlayers()" [disabled]="!selectedLayers || !selectedLayers.length"></button>
+        </ng-template>
+    </p-toolbar>
+
+    <p-table #dt [value]="layers" [rows]="10" [paginator]="true" [globalFilterFields]="['displayName']"
+        [(selection)]="selectedLayers" [rowHover]="true" dataKey="id"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+        <ng-template pTemplate="caption">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                <h5 class="p-m-0">Manage layers</h5>
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"/>
+                </span>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 3rem">
+                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                </th>
+                <th pSortableColumn="displayName">Name<p-sortIcon field="displayName"></p-sortIcon></th>
+                <th pSortableColumn="fileType">File Type<p-sortIcon field="fileType"></p-sortIcon></th>
+                <th pSortableColumn="size">Size<p-sortIcon field="size"></p-sortIcon></th>
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-layer>
+            <tr>
+                <td>
+                    <p-tableCheckbox [value]="layer"></p-tableCheckbox>
+                </td>
+                <td>{{layer.name}}</td>
+                <td>{{layer.type}}</td>
+                <td>{{layer.size}}</td>
+                <td>
+                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2" (click)="editLayer(layer)"></button>
+                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteLayer(layer)"></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                A total of {{layers ? layers.length : 0 }} layers are available to users of the Hyperwall.
+            </div>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog [(visible)]="layerDialog" [style]="{width: '900px'}" header="Layer Details" [modal]="true" >
+    <ng-template pTemplate="content">
+        <div class="form-group">
+            <div class="p-field p-grid">
+                <label for="layerType" class="p-col-fixed" style="width:200">Layer Type</label>
+                <div class="p-col">
+                    <p-dropdown id="layerType" [options]="supportedLayerTypes" [(ngModel)]="selectedLayerType" optionLabel="name" optionValue="code" (onChange)="onLayerTypeChange($event)"></p-dropdown>
+                </div>
+            </div>
+
+            <div class="p-field p-grid">
+                <label for="displayName" class="p-col-fixed" style="width:200">Layer Name</label>
+                <div class="p-col">
+                    <input id="displayName" [(ngModel)]="layer.name" style="width:600px" pInputText/>
+                    <small class="p-invalid" *ngIf="submitted && !layer.name">Name is required.</small>
+                </div>
+            </div>
+
+            <div class="p-field p-grid">
+                <label for="description" class="p-col-fixed" style="width:150">Description</label>
+                <div class="p-col">
+                    <textarea id="description" pInputTextarea [(ngModel)]="layer.description" required rows="3" cols="80" pInputTextArea></textarea>
+                </div>
+            </div>
+
+            <div class="p-field" *ngIf="selectedLayerType.code === 'geojson'">
+                <div class="p-formgrid p-grid">
+                    <p-fileUpload name="geoJSON" mode="basic" accept=".json,.geojson" label="Upload" chooseLabel="Upload" class="p-mr-2 p-d-inline-block" (onSelect)="handleFile($event)"></p-fileUpload>
+                </div>
+            </div>
+
+            <div class="p-field p-grid" *ngIf="selectedLayerType.code === 'agol'">
+                <label for="description" class="p-col-fixed" style="width:150">ArcGIS Online Layer ID</label>
+                <div class="p-col">
+                    <textarea id="description" pInputTextarea [(ngModel)]="layer.arcgis" required rows="1" cols="80" pInputTextArea></textarea>
+                </div>
+            </div>
+
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveLayer()" [disabled]="selectedLayerType.code === 'none'"></button>
+    </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>

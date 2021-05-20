@@ -1,0 +1,95 @@
+#
+# Hyperwall Docker Compose File
+# Jason Ball | Evan Scott | Naomi Steele | Christian Manu
+#
+
+# NOTE: You may need to increase Docker's memory limit to build the map
+# DO NOT use the new "docker compose" command. Use "docker-compose" (with the hyphen)
+
+version: "3.8"
+services:
+  # This service can be removed if another database service is used (e.g., AWS RDS)
+  hyperwall_db:
+    image: postgres
+    restart: always
+    environment:
+      # DB user. This should not be changed.
+      POSTGRES_USER: postgres
+      # DB password. THIS SHOULD BE CHANGED!
+      POSTGRES_PASSWORD: g6dnGmp7AMKFEYh9akeU
+    networks:
+      - hyperwall
+    volumes:
+      - type: bind
+        source: ./hyperwall.sql
+        target: /docker-entrypoint-initdb.d/init.sql
+      - type: volume
+        source: dbdata
+        target: /var/lib/postgresql/data
+    # Uncomment this to allow external connections:
+    # ports:
+    #   - "5432:5432"
+
+  hyperwall_server:
+    build: ./SpringServer
+    image: hyperwall/server
+    ports:
+      - "8081:8080"
+    environment:
+      # Hyperwall server options
+      HYPERWALL_DB_HOST: hyperwall_db
+      HYPERWALL_DB_PORT: 5432
+      HYPERWALL_DB: hyperwall
+      # Should match the username in `hyperwall_db`
+      HYPERWALL_DB_USERNAME: postgres
+      # Should match the password in `hyperwall_db`
+      HYPERWALL_DB_PASSWORD: g6dnGmp7AMKFEYh9akeU
+      # admin-ui API key. This should be changed!
+      HYPERWALL_SERVER_API_KEY: DML8w8USPQHUKSi5fcds
+      # Enables the PurpleAir update timer.
+      # Disable if updating manually or via AWS Lambda
+      HYPERWALL_SERVER_AUTOUPDATE: "true"
+    networks:
+      - hyperwall
+    depends_on:
+      - hyperwall_db
+
+  hyperwall_ui:
+    build:
+      context: ./ui
+      args:
+        # Changing this option requires rebuilding the container
+        - SERVER_HOST=http://localhost:8081
+    image: hyperwall/ui
+    ports:
+      - "8082:80"
+    depends_on:
+      - hyperwall_server
+  
+  hyperwall_admin_ui:
+    build:
+      context: ./admin-ui
+      args:
+        # Changing these options requires rebuilding the container
+        # Should match the API key in `hyperwall_server`
+        API_KEY: DML8w8USPQHUKSi5fcds
+        SERVER_HOST: http://localhost:8081
+        # These should be changed
+        USERNAME: admin
+        PASSWORD: Password123
+    image: hyperwall/admin-ui
+    ports:
+      - "8083:80"
+    depends_on:
+      - hyperwall_server
+    volumes:
+      - type: bind
+        source: ./hyperwall.admin.conf
+        target: /etc/nginx/conf.d/default.conf
+
+
+volumes:
+  dbdata:
+
+networks:
+  hyperwall:
